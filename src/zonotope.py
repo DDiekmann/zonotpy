@@ -94,8 +94,6 @@ class zono:
                 fig = plt.figure()
             if ax is None:
                 ax = fig.add_subplot(111, aspect = 'equal')
-                ax.set_xlim(0, 4)
-                ax.set_ylim(0, 5)
             if self.dimensions == 1:
                 pass #TODO implement 1D visualization
             else:
@@ -110,21 +108,8 @@ class zono:
                     y = []
                     for i in itertools.product([-1.0, 1.0], repeat = self.generators):
                         y.append((np.sum(self.values[1][1:] * np.array(list(i))) + self.values[1][0]))
-                    print(x)
                     x, y = np.array(x), np.array(y)
                     order = np.argsort(np.arctan2(y - y.mean(), x - x.mean()))
                     ax.fill(x[order], y[order], "g", alpha=0.5)
             if show_self:
                 plt.show()
-
-
-if __name__ == "__main__":
-    input = zono(values = np.array([[2, 1, 0], [3, 1, 1]]))
-    print(f"input: {input}")
-    print(input.generators)
-    input.visualize(shape=True, quiver=True)
-
-        
-
-    
-
