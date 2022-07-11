@@ -136,6 +136,15 @@ class zono:
                 bound += g
         return bound
     
+    def to_intervals(self):
+        """
+        Returns the intervals of the zonotope.
+        """
+        intervals = []
+        for i in range(self.dimensions):
+            intervals.append((self.lower_bound(i + 1), self.upper_bound(i + 1)))
+        return intervals
+    
     def visualize(self, quiver = False, shape = False, fig = None, ax = None) -> None:
         """
         Visualize the zonotope.
