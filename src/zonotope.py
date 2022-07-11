@@ -84,7 +84,7 @@ class zono:
             return zono(values = np.append(self.values, v, axis=0))
         else:
             v = np.pad(self.values, [(0, 0), (0, other.values.shape[1] - self.values.shape[1])], 'constant', constant_values = 0)
-            return zono(values = np.append(self.values, v, axis=0))
+            return zono(values = np.append(v, other.values, axis=0))
     
     def split(self) -> 'zono':
         """
@@ -207,3 +207,9 @@ class zono:
                     ax.fill(x[order], y[order], "g", alpha=0.5)
             if show_self:
                 plt.show()
+
+if __name__ == "__main__":
+    v1 = zono(np.array([[1.4, 0.2, 0.7]]))
+    v2 = zono(np.array([[0.9375, 0.75, 0.5625, 0.0]]))
+    hidden = v1.combine(v2)
+    print(hidden)
