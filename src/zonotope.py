@@ -1,5 +1,4 @@
-from __future__ import generators
-import itertools
+import random
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -139,11 +138,30 @@ class zono:
     def to_intervals(self):
         """
         Returns the intervals of the zonotope.
+
+        Returns:
+            list of intervals tuples.
         """
         intervals = []
         for i in range(self.dimensions):
             intervals.append((self.lower_bound(i + 1), self.upper_bound(i + 1)))
         return intervals
+    
+    def get_random_point(self):
+        """
+        Returns a random point in the zonotope.
+        
+        Returns:
+            random point.
+        """
+        return np.random.uniform(self.lower_bound(), self.upper_bound())
+        point = []
+        for i in range(self.dimensions):
+            p = self.values(i, 0)
+            for g in self.values[i][1:]:
+                p += g * np.random.uniform(-1, 1)
+            point.append(p)
+        return point
     
     def visualize(self, quiver = False, shape = False, fig = None, ax = None) -> None:
         """
