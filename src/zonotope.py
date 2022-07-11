@@ -52,8 +52,8 @@ class zono:
         if self.values.shape[1] == other.values.shape[1]:
             return zono(np.add(self.values, other.values))
         if self.values.shape[1] > other.values.shape[1]:
-            other = np.pad(other.values, [(0, 0), (0, self.values.shape[1] - other.values.shape[1])], 'constant', constant_values = 0)
-            return zono(np.add(self.values, other))
+            v = np.pad(other.values, [(0, 0), (0, self.values.shape[1] - other.values.shape[1])], 'constant', constant_values = 0)
+            return zono(np.add(self.values, v))
         else:
             v = np.pad(self.values, [(0, 0), (0, other.values.shape[1] - self.values.shape[1])], 'constant', constant_values = 0)
             return zono(np.add(v, other.values))
@@ -80,11 +80,11 @@ class zono:
         if self.values.shape[1] == other.values.shape[1]:
             return zono(values = np.append(self.values, other.values, axis=0))
         if self.values.shape[1] > other.values.shape[1]:
-            other = np.pad(other.values, [(0, 0), (0, self.values.shape[1] - other.values.shape[1])], 'constant', constant_values = 0)
-            return zono(values = np.append(self.values, other.values, axis=0))
+            v = np.pad(other.values, [(0, 0), (0, self.values.shape[1] - other.values.shape[1])], 'constant', constant_values = 0)
+            return zono(values = np.append(self.values, v, axis=0))
         else:
             v = np.pad(self.values, [(0, 0), (0, other.values.shape[1] - self.values.shape[1])], 'constant', constant_values = 0)
-            return zono(values = np.append(self.values, other.values, axis=0))
+            return zono(values = np.append(self.values, v, axis=0))
     
     def split(self) -> 'zono':
         """
