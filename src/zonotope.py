@@ -8,6 +8,19 @@ import matplotlib.patches as patches
 class zono:
 
     def __init__(self, values: np.array = None, dimension = 1, generators = 1) -> None:
+        """
+        Initialize a zonotope.
+        If values is None, a zonotope with dimension and generators is created.
+        If values is not None, it must be a numpy array with shape (dimension, generators + 1).
+        The first column is the center of the zonotope.
+        The remaining columns are the generators.
+        The zonotope is assumed to be closed.
+        
+        Args:
+        values: numpy array with shape (dimension, generators + 1).
+        dimension: dimension of the zonotope.
+        generators: number of generators.
+        """
         if values is None:
             self.values = np.zeros((dimension, generators))
         else:
@@ -58,9 +71,30 @@ class zono:
         return self.__mul__(other)
     
     def combine(self, other: 'zono') -> 'zono':
-        return zono(values = np.append(self.values, other.values, axis=0))
+        """
+        Combine two zonotopes.
+
+        Args:
+            other: zonotope to combine.
+        """
+        if self.values.shape[1] == other.values.shape[1]:
+            return zono(values = np.append(self.values, other.values, axis=0))
+        if self.values.shape[1] > other.values.shape[1]:
+            other = np.pad(other.values, [(0, 0), (0, self.values.shape[1] - other.values.shape[1])], 'constant', constant_values = 0)
+            return zono(values = np.append(self.values, other.values, axis=0))
+        else:
+            v = np.pad(self.values, [(0, 0), (0, other.values.shape[1] - self.values.shape[1])], 'constant', constant_values = 0)
+            return zono(values = np.append(self.values, other.values, axis=0))
     
     def split(self) -> 'zono':
+        """
+        Split a zonotope into two zonotopes.
+        The number of dimensions must be even.
+        The zonotopes are assumed to be closed.
+
+        Returns:
+            two zonotopes with the same size.
+        """
         if self.dimensions % 2 != 0:
             raise ValueError("Dimension must be even")
         else:
@@ -68,6 +102,15 @@ class zono:
             return zono(values[0]), zono(values[1])
     
     def upper_bound(self, dimension = 1) -> float:
+        """
+        Returns the upper bound of the zonotope in the given dimension.
+        
+        Args:
+            dimension: dimension of the upper bound.
+        
+        Returns:
+            upper bound in the given dimension.
+        """
         bound = self.values[dimension-1][0]
         for g in self.values[dimension-1][1:]:
             if g > 0:
@@ -77,6 +120,14 @@ class zono:
         return bound
     
     def lower_bound(self, dimension = 1) -> float:
+        """
+        Returns the lower bound of the zonotope in the given dimension.
+        
+        Args:
+            dimension: dimension of the lower bound.
+        
+        Returns:
+            lower bound in the given dimension."""
         bound = self.values[dimension-1][0]
         for g in self.values[dimension-1][1:]:
             if g > 0:
@@ -86,6 +137,22 @@ class zono:
         return bound
     
     def visualize(self, quiver = False, shape = False, fig = None, ax = None) -> None:
+        """
+        Visualize the zonotope.
+        If quiver is True, the generators are visualized as quiver plots.
+        If shape is True, the zonotope is visualized as a polygon.
+        If fig and ax are not None, the zonotope is visualized in the given figure and axis.
+        If fig and ax are None, a new figure and axis are created and the plot is drawn.
+
+        Args:
+            quiver: boolean.
+            shape: boolean.
+            fig: figure.
+            ax: axis.
+        
+        Returns:
+            None.
+        """
         show_self = (fig == None) or (ax == None)
         if self.dimensions > 2:
             raise ValueError("Dimension must be <= 2")
