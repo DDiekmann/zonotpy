@@ -154,10 +154,9 @@ class zono:
         Returns:
             random point.
         """
-        return np.random.uniform(self.lower_bound(), self.upper_bound())
         point = []
         for i in range(self.dimensions):
-            p = self.values(i, 0)
+            p = self.values[i][0]
             for g in self.values[i][1:]:
                 p += g * np.random.uniform(-1, 1)
             point.append(p)
