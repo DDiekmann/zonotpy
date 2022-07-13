@@ -163,6 +163,23 @@ class zono:
             point.append(p)
         return point
     
+    def check_random_point(self, point: list):
+        """
+        Checks if the given point is in the zonotope.
+        
+        Args:
+            point: point to check.
+        
+        Returns:
+            True if the point is in the zonotope, False otherwise.
+        """
+        if len(point) != self.dimensions:
+            raise ValueError("Dimension mismatch")
+        for i in range(self.dimensions):
+            if point[i] < self.lower_bound(i + 1) or point[i] > self.upper_bound(i + 1):
+                return False
+        return True
+    
     def visualize(self, quiver = False, shape = False, fig = None, ax = None) -> None:
         """
         Visualize the zonotope.
