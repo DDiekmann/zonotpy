@@ -26,6 +26,8 @@ class zono:
         """
         if values is None:
             self.values = np.zeros((dimension, generators))
+        elif type(values) is list:
+            self.values = np.array(values)
         else:
             self.values = values
         self.dimensions = self.values.shape[0]
@@ -269,4 +271,4 @@ class zono:
         values = []
         for line in lines[2:]:
             values.append(list(map(float, line.split())))
-        return zono(values)
+        return zono(values=np.array(values))
