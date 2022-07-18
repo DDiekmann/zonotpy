@@ -5,6 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
 class zono:
 
     def __init__(self, values: np.array = None, dimension = 1, generators = 1) -> None:
@@ -198,16 +201,21 @@ class zono:
             None.
         """
         show_self = (fig == None) or (ax == None)
-        if self.dimensions > 2:
-            raise ValueError("Dimension must be <= 2")
+        if self.dimensions > 3:
+            raise ValueError("Dimension must be <= 3")
         else:
             if fig is None:
                 fig = plt.figure()
-            if ax is None:
-                ax = fig.add_subplot(111, aspect = 'equal')
             if self.dimensions == 1:
-                pass #TODO implement 1D visualization
-            else:
+                if ax is None:
+                    ax = fig.add_subplot(111, aspect = 'equal')
+                if quiver: #TODO implement 1D quiver visualization
+                    pass
+                if shape:
+                    raise NotImplementedError("Shape visualization not implemented for 1D zonotopes")
+            elif self.dimensions == 2:
+                if ax is None:
+                    ax = fig.add_subplot(111, aspect = 'equal')
                 if quiver:
                     for i in range(self.generators):
                         ax.quiver(self.values[0][0], self.values[1][0], self.values[0][i + 1], self.values[1][i + 1])
@@ -222,11 +230,43 @@ class zono:
                     x, y = np.array(x), np.array(y)
                     order = np.argsort(np.arctan2(y - y.mean(), x - x.mean()))
                     ax.fill(x[order], y[order], "g", alpha=0.5)
+            else:
+                if ax is None:
+                    ax = Axes3D(fig)
+                if quiver: #TODO implement 3D quiver visualization
+                    pass
+                if shape: #TODO Fix 3D shape visualization
+                    x = []
+                    for i in itertools.product([-1.0, 1.0], repeat = self.generators):
+                        x.append((np.sum(self.values[0][1:] * np.array(list(i))) + self.values[0][0]))
+                    y = []
+                    for i in itertools.product([-1.0, 1.0], repeat = self.generators):
+                        y.append((np.sum(self.values[1][1:] * np.array(list(i))) + self.values[1][0]))
+                    z = []
+                    for i in itertools.product([-1.0, 1.0], repeat = self.generators):
+                        z.append((np.sum(self.values[2][1:] * np.array(list(i))) + self.values[2][0]))
+                    print(f"X: {x}")
+                    print(f"Y: {y}")
+                    print(f"Z: {z}")
+                    vertices = [list(zip(x,y,z))]
+                    print(vertices)
+                    ax.add_collection3d(Poly3DCollection(vertices))
             if show_self:
                 plt.show()
 
-if __name__ == "__main__":
-    v1 = zono(np.array([[1.4, 0.2, 0.7]]))
-    v2 = zono(np.array([[0.9375, 0.75, 0.5625, 0.0]]))
-    hidden = v1.combine(v2)
-    print(hidden)
+    def from_file(file_name:str) -> 'zono':
+        """
+        Loads a zonotope from a file.
+        
+        Args:
+            file_name: name of the file.
+        
+        Returns:
+            zonotope loaded from the file.
+        """
+        with open(file_name, 'r') as f:
+            lines = f.readlines()
+        values = []
+        for line in lines[2:]:
+            values.append(list(map(float, line.split())))
+        return zono(values)
