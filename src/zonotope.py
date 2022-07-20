@@ -185,7 +185,7 @@ class zono:
                 return False
         return True
     
-    def visualize(self, quiver = False, shape = False, fig = None, ax = None) -> None:
+    def visualize(self, quiver = False, shape = False, shape_color = "g", fig = None, ax = None) -> None:
         """
         Visualize the zonotope.
         If quiver is True, the generators are visualized as quiver plots.
@@ -231,7 +231,7 @@ class zono:
                         y.append((np.sum(self.values[1][1:] * np.array(list(i))) + self.values[1][0]))
                     x, y = np.array(x), np.array(y)
                     order = np.argsort(np.arctan2(y - y.mean(), x - x.mean()))
-                    ax.fill(x[order], y[order], "g", alpha=0.5)
+                    ax.fill(x[order], y[order], shape_color, alpha=0.5)
             else:
                 if ax is None:
                     ax = Axes3D(fig)
@@ -272,3 +272,7 @@ class zono:
         for line in lines[2:]:
             values.append(list(map(float, line.split())))
         return zono(values=np.array(values))
+
+if __name__ == "__main__":
+    z = zono.from_file("src/test.txt")
+    print(z)
